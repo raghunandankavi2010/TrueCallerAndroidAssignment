@@ -1,6 +1,5 @@
 package me.raghu.raghunandan_kavi
 
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +32,7 @@ class FetchDataRepository {
 
     }.flowOn(Dispatchers.IO)
 
-    private fun fetch10thCharacter(): String {
+    fun fetch10thCharacter(): String {
 
         var output = ""
          try {
@@ -75,7 +74,7 @@ class FetchDataRepository {
         return output
     }
 
-    private fun fetchEvery10thCharacter(): String {
+     fun fetchEvery10thCharacter(): String {
         var output = ""
         try {
             var inputstream: InputStream? = null
@@ -126,7 +125,7 @@ class FetchDataRepository {
        return output
     }
 
-    private fun fetchAll(): String {
+     fun fetchAll(): String {
         var output = ""
          try {
             var inputstream: InputStream? = null
