@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Raghunandan_Kavi</string>
+    <string name="fetch_data">Fetch Data</string>
+    <string name="EveryTenthCharacter">Every 10th Character</string>
+    <string name="WordCounter">Word Counter</string>
+    <string name="TenthCharacter">10th Character</string>
+</resources>
