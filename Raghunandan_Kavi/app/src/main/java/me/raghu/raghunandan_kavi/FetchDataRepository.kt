@@ -1,10 +1,5 @@
 package me.raghu.raghunandan_kavi
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
@@ -14,39 +9,40 @@ import java.util.*
 class FetchDataRepository {
 
 
-    @ExperimentalCoroutinesApi
-    fun fetchEveryTenthChar(): Flow<String> = flow {
-        emit(fetchEvery10thCharacter())
+    /* @ExperimentalCoroutinesApi
+     fun fetchEveryTenthChar(): Flow<String> = flow {
+         emit(fetchEvery10thCharacter())
 
-    }.flowOn(Dispatchers.IO)
+     }.flowOn(Dispatchers.IO)
 
-    @ExperimentalCoroutinesApi
-    fun fetchTenthChar(): Flow<String> = flow {
-        emit(fetch10thCharacter())
+     @ExperimentalCoroutinesApi
+     fun fetchTenthChar(): Flow<String> = flow {
+         emit(fetch10thCharacter())
 
-    }.flowOn(Dispatchers.IO)
+     }.flowOn(Dispatchers.IO)
 
-    @ExperimentalCoroutinesApi
-    fun fetchCountWords(): Flow<String> = flow {
-        emit(fetchAll())
+     @ExperimentalCoroutinesApi
+     fun fetchCountWords(): Flow<String> = flow {
+         emit(fetchAll())
 
-    }.flowOn(Dispatchers.IO)
+     }.flowOn(Dispatchers.IO)*/
 
-    fun fetch10thCharacter(): String {
+    private lateinit var success1:Result
+    // Use of sealed class
+    fun fetch10thCharacter(): Result {
 
-        var output = ""
-         try {
-            var inputStream: InputStream? = null
-            try {
-                val url = URL(URL)
-                val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                conn.readTimeout = 10000
-                conn.connectTimeout = 15000
-                conn.requestMethod = "GET"
-                conn.doInput = true
-                conn.connect()
-                val responseCode: Int = conn.responseCode
-                if (responseCode == 200) {
+        var inputStream: InputStream? = null
+        try {
+            val url = URL(URL)
+            val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
+            conn.readTimeout = 10000
+            conn.connectTimeout = 15000
+            conn.requestMethod = "GET"
+            conn.doInput = true
+            conn.connect()
+
+             when (val responseCode: Int = conn.responseCode) {
+                200 -> {
                     inputStream = conn.inputStream
                     inputStream?.let {
                         val reader: Reader = InputStreamReader(inputStream, "UTF-8")
@@ -54,27 +50,36 @@ class FetchDataRepository {
                         for (i in 0..9) {
                             ch = reader.read()
                         }
-                        output = "Tenth Character is $ch"
-
+                        success1 = Result.Success("Tenth Character is $ch")
                     }
-                }else{
-                    output = "Something went wrong!$responseCode"
                 }
-            } finally {
-                inputStream?.close()
+                408 -> {
+                    success1 = Result.ConnectionError
+
+                }
+                500 -> {
+                    success1 = Result.ServerError("Something Wrong on the Server")
+                }
+                else -> {
+                    success1 = Result.UnExpectedError(responseCode)
+                }
             }
+            return success1
+
         } catch (e: MalformedURLException) {
             e.printStackTrace()
-             output = e.message.toString()
+            return Result.Error(e)
 
-        } catch (e:IOException) {
+        } catch (e: IOException) {
             e.printStackTrace()
-             output = e.message.toString()
+            return Result.Error(e)
+        } finally {
+            inputStream?.close()
         }
-        return output
+
     }
 
-     fun fetchEvery10thCharacter(): String {
+    fun fetchEvery10thCharacter(): String {
         var output = ""
         try {
             var inputstream: InputStream? = null
@@ -108,7 +113,7 @@ class FetchDataRepository {
                         sb.append("'")
                         output = sb.toString()
                     }
-                }else{
+                } else {
                     output = "Something went wrong!$responseCode"
                 }
             } finally {
@@ -118,16 +123,16 @@ class FetchDataRepository {
             e.printStackTrace()
             output = e.message.toString()
 
-        } catch (e:IOException) {
+        } catch (e: IOException) {
             e.printStackTrace()
             output = e.message.toString()
         }
-       return output
+        return output
     }
 
-     fun fetchAll(): String {
+    fun fetchAll(): String {
         var output = ""
-         try {
+        try {
             var inputstream: InputStream? = null
             try {
                 val url = URL(URL)
@@ -170,7 +175,7 @@ class FetchDataRepository {
                         }
                         output = sb.toString()
                     }
-                }else{
+                } else {
                     output = "Something went wrong!$responseCode"
                 }
             } finally {
@@ -178,11 +183,11 @@ class FetchDataRepository {
             }
         } catch (e: MalformedURLException) {
             e.printStackTrace()
-             output = e.message.toString()
+            output = e.message.toString()
 
-        } catch (e:IOException) {
+        } catch (e: IOException) {
             e.printStackTrace()
-             output = e.message.toString()
+            output = e.message.toString()
         }
         return output
     }

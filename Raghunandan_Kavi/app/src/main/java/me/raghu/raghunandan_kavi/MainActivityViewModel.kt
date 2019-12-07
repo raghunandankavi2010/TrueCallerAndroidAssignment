@@ -8,6 +8,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+
 class MainActivityViewModel : ViewModel() {
 
     private val fetchDataRepository: FetchDataRepository = FetchDataRepository()
@@ -28,9 +29,28 @@ class MainActivityViewModel : ViewModel() {
             val result2 = two.await()
             val result3 = three.await()
 
-            tenthChar.value = result1
-            everyTenthChar.value = result2
-            wordsCount.value = result3
+            // Use of sealed class to handle cases of error and exceptions
+            // useful to show or hide ui according to response.
+            when (result1) {
+                is Result.Success -> {
+                    tenthChar.value = result1.data
+                }
+                is Result.Error -> {
+                    tenthChar.value = result1.exception.message
+                }
+                is Result.ServerError -> {
+                    tenthChar.value = result1.error
+                }
+                is Result.ConnectionError -> {
+                    tenthChar.value = "Check your connection and retry"
+                }
+                is Result.UnExpectedError -> {
+                    tenthChar.value = "Un-Expected Error ${result1.code}"
+                }
+            }
+
+             everyTenthChar.value = result2
+             wordsCount.value = result3
 
             // sequential
             /*fetchDataRepository.fetchTenthChar().collect {
