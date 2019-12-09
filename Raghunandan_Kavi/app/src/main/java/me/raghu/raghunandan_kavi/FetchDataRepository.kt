@@ -153,7 +153,7 @@ class FetchDataRepository {
                         var line: String? = null
                         while (br.readLine().also { line = it } != null) {
                             val tokens =
-                                line!!.split("[\\s\\d~`!@#\\$%\\^&\\*\\(\\)\\-\\+\\[\\]\\{\\}\'\"\\\\|/\\?,\\.;:]+")
+                                line!!.split("\\W+") // regex taken from internet
                                     .toTypedArray()
 
                             for (element in tokens) {
