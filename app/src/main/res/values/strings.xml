@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TrueCaller Android Assignment</string>
+    <string name="fetch_data">Fetch Data</string>
+    <string name="EveryTenthCharacter">Every 10th Character</string>
+    <string name="WordCounter">Word Counter</string>
+    <string name="TenthCharacter">10th Character</string>
+    <string name="no_network_connection">No Network Connection!.Click here to retry!</string>
+</resources>
