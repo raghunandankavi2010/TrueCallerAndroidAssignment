@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
             if(isNetworkConnected) {
                 root.visibility = View.VISIBLE
                 no_network.visibility = View.GONE
-                model.launchDataLoad()
             }else {
                 root.visibility = View.GONE
                 no_network.visibility = View.VISIBLE
