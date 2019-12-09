@@ -13,9 +13,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var connectivityChecker:ConnectivityChecker
-    private var isNetworkConnected:Boolean = false
-    private lateinit var model:MainActivityViewModel
+    private lateinit var connectivityChecker: ConnectivityChecker
+    private lateinit var model: MainActivityViewModel
 
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,9 +22,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         val connectivityManager = this@MainActivity.getSystemService<ConnectivityManager>()
-       if (connectivityManager != null) {
-           connectivityChecker = ConnectivityChecker(connectivityManager)
-       }
+        if (connectivityManager != null) {
+            connectivityChecker = ConnectivityChecker(connectivityManager)
+        }
 
         supportActionBar?.title = "Data Display"
         model = ViewModelProviders.of(this)[MainActivityViewModel::class.java]
@@ -35,40 +34,38 @@ class MainActivity : AppCompatActivity() {
         no_network.setOnClickListener {
             checkConnection()
         }
-
-        model.everyTenthChar.observe(this, Observer<String> { value ->
-            value?.let { textView2.text = it }
-        })
-        model.wordsCount.observe(this, Observer<String> { value ->
-            value?.let { textView3.text = it }
-        })
     }
 
     @ExperimentalCoroutinesApi
-    private fun checkConnection(){
-        connectivityChecker?.apply {
+    private fun checkConnection() {
+        connectivityChecker.apply {
             lifecycle.addObserver(this)
             connectedStatus.observe(this@MainActivity, Observer<Boolean> {
-              if(it){
-                  loadData()
-              }else{
-                  showError()
-              }
+                if (it) {
+                    loadData()
+                } else {
+                    showError()
+                }
             })
         }
     }
 
     @ExperimentalCoroutinesApi
-    private fun loadData(){
+    private fun loadData() {
         root.visibility = View.VISIBLE
         no_network.visibility = View.GONE
         model.getTenthChar().observe(this, Observer<String> { value ->
             value?.let { textView1.text = it }
         })
-        model.launchDataLoad()
+        model.getEveryTenthChar().observe(this, Observer<String> { value ->
+            value?.let { textView2.text = it }
+        })
+        model.getWordsCount().observe(this, Observer<String> { value ->
+            value?.let { textView3.text = it }
+        })
     }
 
-    private fun showError(){
+    private fun showError() {
         root.visibility = View.GONE
         no_network.visibility = View.VISIBLE
     }
